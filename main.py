@@ -1,3 +1,4 @@
+
 import pandas as pd
 import plotly.express as px
 from dash import Dash, dcc, html, Input, Output
@@ -5,18 +6,18 @@ import plotly.graph_objs as go
 
 app = Dash(__name__, external_stylesheets=['styles.css'])
 colors = {
-    'background': '#111111',
     'text': '#73B449'
 }
 app.css.config.serve_locally = True
 app.title = 'TreeDatalize'
 
+#Reading the csv
 df = (
     pd.read_csv('iTreePlantingSclean.csv')
 )
-
 species_options = [{'label': species, 'value': species} for species in df['Species']]
 
+#Map of tree types to their images
 species_images = {
     'Canary island pine(Pinus canariensis)': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Young_cone.JPG/317px-Young_cone.JPG',
     'Blue atlas cedar(Cedrus atlantica v. glauca)': 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Cedrus_atlantica.jpg',
@@ -75,7 +76,7 @@ species_images = {
     'Common fig(Ficus carica)': 'https://s3.amazonaws.com/eit-planttoolbox-prod/media/images/Ficus_carica_fruit_b_ICYrKNqDYB9v.jpeg'
 }
 
-
+#Format the structure of the page
 app.layout = html.Div(
     children=[
     html.H1(
