@@ -88,12 +88,21 @@ def update_output_bar(species):
 
 def update_output_scatter(species):
     # Retrieve the data for the selected species from your dataset
-    species_data = df.loc[df['Species'] == species]
+    #species_data = df.loc[df['Species'] == species]
     colors = ['blue', 'green', 'red', 'orange']
 
     # Create a scatter plot using tree biomass and electricity saved
     scatter_data = []
     for i, row in df.iloc[:-1].iterrows():
+        def colors(num):
+            if num < 3000:
+                return '#ca35a6'
+            elif num >= 3000 and num < 6000:
+                return '#a6ca35'
+            else:
+                return '#35a6ca'
+        # Remove commas and convert to float
+        number_float = float(row['Electricity Saved (kWh)'].replace(",", ""))
         scatter_data.append(
             go.Scatter(
                 x=[row['Tree Biomass (short ton)']],
@@ -101,7 +110,7 @@ def update_output_scatter(species):
                 mode='markers',
                 marker=dict(
                     size=10,
-                    color=colors[i % len(colors)],  # Set color based on index of the species
+                    color=colors(number_float)
                 ),
                 text=row['Species'],
                 name=row['Species']  # Add species name as a trace name
