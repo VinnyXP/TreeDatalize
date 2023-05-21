@@ -4,6 +4,10 @@ from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objs as go
 
 app = Dash(__name__, external_stylesheets=['styles.css'])
+colors = {
+    'background': '#111111',
+    'text': '#73B449'
+}
 app.css.config.serve_locally = True
 app.title = 'TreeDatalize'
 
@@ -19,7 +23,8 @@ app.layout = html.Div(
         children='TreeDatalize',
         style={
             'textAlign': 'center',
-            'font-family': 'DM Sans'
+            'font-family': 'DM Sans',
+            'color': colors['text']
         }
     ),
     dcc.Markdown('''
@@ -129,6 +134,7 @@ def update_output_scatter(species):
 
     # Return the chart as a Plotly graph object
     return dcc.Graph(figure=fig)
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
