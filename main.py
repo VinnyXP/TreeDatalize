@@ -24,7 +24,6 @@ app.layout = html.Div(
     ),
     dcc.Markdown('''
     # Cost Benefits of Each Tree
-
     '''),
     html.Label('Select a Species:'),
     dcc.Dropdown(
@@ -32,14 +31,18 @@ app.layout = html.Div(
         options=species_options,
         value=species_options[0]['value']  # Set default value to the first species
     ),
-    html.Div(id='output-div')
+    html.Div(id='output-div-bar'),
+    dcc.Markdown('''
+    # Tree Biomass vs. Electricity Saved
+    '''),
+    html.Div(id='output-div-scatter')
 ])
 
 @app.callback(
-    Output('output-div', 'children'),
+    Output('output-div-bar', 'children'),
     Input('species-dropdown', 'value')
 )
-def update_output(species):
+def update_output_bar(species):
     # Retrieve the data for the selected species from your dataset
     species_data = df.loc[df['Species'] == species]
 
@@ -74,6 +77,46 @@ def update_output(species):
     
     fig.update_layout(autotypenumbers='convert types')
     fig.update_traces(width=0.8)
+
+    # Return the chart as a Plotly graph object
+    return dcc.Graph(figure=fig)
+
+@app.callback(
+    Output('output-div-scatter', 'children'),
+    Input('species-dropdown', 'value')
+)
+
+def update_output_scatter(species):
+    # Retrieve the data for the selected species from your dataset
+    species_data = df.loc[df['Species'] == species]
+    colors = ['blue', 'green', 'red', 'orange']
+
+    # Create a scatter plot using tree biomass and electricity saved
+    scatter_data = []
+    for i, row in df.iloc[:-1].iterrows():
+        scatter_data.append(
+            go.Scatter(
+                x=[row['Tree Biomass (short ton)']],
+                y=[row['Electricity Saved (kWh)']],
+                mode='markers',
+                marker=dict(
+                    size=10,
+                    color=colors[i % len(colors)],  # Set color based on index of the species
+                ),
+                text=row['Species'],
+                name=row['Species']  # Add species name as a trace name
+            )
+        )
+
+    layout = go.Layout(
+        xaxis=dict(title='Tree Biomass (short ton)'),
+        yaxis=dict(title='Electricity Saved (kWh)'),
+        hovermode='closest',
+    )
+
+    # Create the scatter plot figure
+    fig = go.Figure(data=scatter_data, layout=layout)
+    fig.update_layout(autotypenumbers='convert types')
 
     # Return the chart as a Plotly graph object
     return dcc.Graph(figure=fig)
